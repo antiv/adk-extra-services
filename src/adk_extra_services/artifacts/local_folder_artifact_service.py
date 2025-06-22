@@ -142,6 +142,10 @@ class LocalFolderArtifactService(BaseArtifactService):
         # User-scoped artefacts – prepend namespace
         _collect(self.base_path / app_name / user_id / "user", add_user_prefix=True)
 
+        for user_key in {k for k in keys if k.startswith("user:")}:  # noqa: C401 – set comprehension fine here
+            plain_key = user_key[len("user:"):]
+            keys.discard(plain_key)
+
         return sorted(keys)
 
     @override
