@@ -30,6 +30,7 @@ dependencies = [
     "typing-extensions>=4.0.0",
     "motor>=3.3.0",
     "redis>=5.0.0",
+    "azure-storage-blob>=12.20.0",
     "python-dotenv>=1.0.0",
 ]
 

@@ -40,6 +40,7 @@ We welcome contributions from the community! Here's how you can help improve thi
 
 4. **Run tests:**
    ```bash
+   pip install -e ".[test]"
    pytest
    ```
 
