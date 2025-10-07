@@ -77,10 +77,23 @@ Storage and management of agent artifacts.
   artifact_service = LocalFolderArtifactService(base_path="./artifacts_storage")
   ```
 
-- **AzureBlobStorageService**: ⚙️ Store and manage artifacts in Azure Blob Storage (in development)
+- **AzureBlobArtifactService**: Store and manage artifacts in Azure Blob Storage
+
+  **Prerequisites**: Install the Azure Blob Storage SDK:
+  ```bash
+  pip install azure-storage-blob
+  ```
+
   ```python
-  # Coming soon!
-  from adk_extra_services.artifacts import AzureBlobStorageService
+  from adk_extra_services.artifacts import AzureBlobArtifactService
+  from azure.core.credentials import AzureSasCredential
+
+  azure_service = AzureBlobArtifactService(
+      account_url="https://yourstorageaccount.blob.core.windows.net",
+      container_name="your-container-name",
+      credential=AzureSasCredential("your-sas-token"),
+      ensure_container=True,
+  )
   ```
 
 For complete usage examples and API documentation, see the [Artifacts Guide](examples/artifacts/README.md).
