@@ -79,11 +79,6 @@ Storage and management of agent artifacts.
 
 - **AzureBlobArtifactService**: Store and manage artifacts in Azure Blob Storage
 
-  **Prerequisites**: Install the Azure Blob Storage SDK:
-  ```bash
-  pip install azure-storage-blob
-  ```
-
   ```python
   from adk_extra_services.artifacts import AzureBlobArtifactService
   from azure.core.credentials import AzureSasCredential
