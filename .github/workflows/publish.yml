@@ -1,0 +1,48 @@
+name: Publish to PyPI
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    # Only run on main branch pushes or version tags
+    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.11"
+
+    - name: Install uv
+      run: curl -LsSf https://astral.sh/uv/install.sh | sh
+
+    - name: Install dependencies
+      run: |
+        uv venv .venv
+        source .venv/bin/activate
+        uv pip install build twine
+
+    - name: Build package
+      run: |
+        source .venv/bin/activate
+        python -m build
+
+    - name: Check package
+      run: |
+        source .venv/bin/activate
+        twine check dist/*
+
+    - name: Publish to PyPI
+      env:
+        TWINE_USERNAME: __token__
+        TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+      run: |
+        source .venv/bin/activate
+        twine upload dist/*
