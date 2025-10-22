@@ -91,6 +91,16 @@ Storage and management of agent artifacts.
   )
   ```
 
+- **SupabaseArtifactService**: Store and manage artifacts in Supabase Storage
+
+  ```python
+  from adk_extra_services.artifacts import SupabaseArtifactService
+
+  supabase_service = SupabaseArtifactService(
+      bucket_name="artifacts"  # or from env vars SUPABASE_BUCKET
+  )
+  ```
+
 For complete usage examples and API documentation, see the [Artifacts Guide](examples/artifacts/README.md).
 
 ## 🤝 Contributing

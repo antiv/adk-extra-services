@@ -12,6 +12,7 @@ graph TD
     A --> D[S3ArtifactService]
     A --> E[LocalFolderArtifactService]
     A --> F[SupabaseArtifactService]
+    A --> G[AzureBlobArtifactService]
     
     style A fill:#ffffff,stroke:#000000,stroke-width:1px,color:#000000
     style B fill:#f5f5f5,stroke:#666,stroke-width:1px,color:#000000
@@ -19,6 +20,7 @@ graph TD
     style D fill:#e3f2fd,stroke:#1976d2,stroke-width:2px,color:#000000
     style E fill:#e3f2fd,stroke:#1976d2,stroke-width:2px,color:#000000
     style F fill:#e3f2fd,stroke:#1976d2,stroke-width:2px,color:#000000
+    style G fill:#e3f2fd,stroke:#1976d2,stroke-width:2px,color:#000000
 ```
 
 </div>
@@ -273,3 +275,62 @@ artifact_service = LocalFolderArtifactService(base_path="./artifacts_storage")
 ### Implementation Details
 
 For implementation details, see [`adk_extra_services/artifacts`](../../src/adk_extra_services/artifacts/  ).
+
+## AzureBlobArtifactService
+
+**Storage Mechanism:** Uses Azure Blob Storage. Each artifact version is stored as a separate blob within a container using a hierarchical key pattern:
+
+```
+<app_name>/<user_id>/<session_id>/<filename>/<version>
+```
+
+User-scoped artifacts follow:
+
+```
+<app_name>/<user_id>/user/<filename>/<version>
+```
+
+### Key Features
+- **Parity with S3/Supabase:** Same naming and versioning semantics for consistency.
+- **Flexible Auth:** Supports either connection string or account URL + credential (SAS, key, or DefaultAzureCredential).
+- **Auto-container:** Optionally creates the container if missing.
+
+### Instantiation
+
+```python
+from adk_extra_services.artifacts import AzureBlobArtifactService
+
+# Option 1: Connection string
+service = AzureBlobArtifactService(
+    container_name="artifacts",
+    connection_string="<AZURE_STORAGE_CONNECTION_STRING>"
+)
+
+# Option 2: Account URL + credential (e.g., SAS token or account key)
+service = AzureBlobArtifactService(
+    container_name="artifacts",
+    account_url="https://<account>.blob.core.windows.net",
+    credential="<SAS_or_account_key>"
+)
+
+# Pass to Runner
+runner = Runner(..., artifact_service=service)
+```
+
+### Example: Running the Azure example
+
+1. Prepare your environment:
+   ```bash
+   cd examples/artifacts
+   cp .env.example .env
+   ```
+2. Edit `.env` and set either:
+   - `AZURE_STORAGE_CONNECTION_STRING=...`
+   - or both `AZURE_STORAGE_ACCOUNT_URL=https://<account>.blob.core.windows.net` and `AZURE_STORAGE_CREDENTIAL=<SAS_or_account_key>`
+   - `AZURE_CONTAINER=artifacts` (optional; defaults to `artifacts`)
+3. Run the example:
+   ```bash
+   python azure_artifact_example.py
+   ```
+
+If configured correctly, you should see `sample.csv` uploaded to your container under the expected path.
